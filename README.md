@@ -1,104 +1,150 @@
-GFG Puzzle Scraper → Notion Automation
+Here is a clean **README.md** file in Markdown format.
 
-This script scrapes all puzzle links from the GeeksforGeeks page
-“Top 100 Puzzles Asked in Interviews”
-and automatically adds them into a Notion database via the Notion API.
+---
 
-Features
+# GFG Puzzle Scraper to Notion
 
-Scrapes puzzle titles and URLs from GFG.
+This project automatically scrapes puzzle links from the GeeksforGeeks page **“Top 100 Puzzles Asked in Interviews”** and saves them into a Notion database using the Notion API.
 
-Cleans and removes duplicate entries.
+---
 
-Creates a Notion database page for each puzzle with:
+## Features
 
-Puzzle Title (Title property)
+* Scrapes puzzle titles and URLs from GFG.
+* Removes duplicate entries.
+* Inserts each puzzle into a Notion database.
+* Uses a 1-second delay to avoid Notion rate limits.
+* Includes clear logging and error handling.
+* Uses `.env` for secure configuration.
 
-URL (URL property)
+---
 
-Done (Checkbox)
+## Technologies Used
 
-Includes logging and error handling.
+* Python
+* Requests
+* BeautifulSoup4
+* Notion API (`notion-client`)
+* python-dotenv
+* Logging
 
-Uses .env for secure API credentials.
+---
 
-Requirements
-Python Packages
+## Setup Instructions
 
-Install dependencies:
+### 1. Clone the project
 
+```bash
+git clone <your_repo_url>
+cd <project_folder>
+```
+
+### 2. Install dependencies
+
+```bash
 pip install requests beautifulsoup4 python-dotenv notion-client
+```
 
-Environment Variables
+### 3. Create a `.env` file
 
-Create a .env file:
+```
+NOTION_API_KEY=your_notion_secret_key
+NOTION_DATABASE_ID=your_database_id
+```
 
-NOTION_API_KEY=your-secret-api-key
-NOTION_DATABASE_ID=your-database-id
-
-Notion Database Setup
+### 4. Configure your Notion database
 
 Your Notion database must contain these properties:
 
-Property Name	Type
-Puzzle Title	Title
-URL	URL
-Done	Checkbox
-How It Works
-1. Scrapes the GFG Puzzle Page
+| Property Name | Type     |
+| ------------- | -------- |
+| Puzzle Title  | Title    |
+| URL           | URL      |
+| Done          | Checkbox |
+
+Make sure names match exactly.
+
+---
+
+## How the Script Works
+
+### 1. Scrape puzzles
 
 The script fetches:
 
+```
 https://www.geeksforgeeks.org/aptitude/top-100-puzzles-asked-in-interviews/
+```
 
+It extracts puzzle titles + URLs from tables inside `<div class="text">`.
 
-Then extracts puzzle titles and URLs from all tables inside <div class="text">.
+### 2. Deduplicate
 
-2. Removes Duplicate Links
+Removes repeated links based on URL.
 
-URLs are used as unique keys.
+### 3. Add puzzles to Notion
 
-3. Pushes Each Puzzle to Notion
+Each puzzle is added as a page with:
 
-Each puzzle is added as a page in your database with a 1-second delay to avoid hitting Notion’s rate limits.
+* Title → Puzzle Title
+* URL → URL property
+* Done → set to false
+* Parent → Your database ID
 
-Running the Script
+### 4. Rate limiting
+
+A `time.sleep(1)` prevents hitting Notion API limits.
+
+---
+
+## Running the Script
+
+```bash
 python main.py
+```
 
+Example log output:
 
-You will see logs such as:
-
+```
 INFO - Fetching puzzles...
-INFO - Found 95 unique puzzles
-INFO - Adding puzzle to Notion: Example Puzzle
+INFO - Found 93 unique puzzles.
+INFO - Adding puzzle to Notion: Ages Puzzle
+INFO - Successfully added all puzzles. Script complete.
+```
 
-File Structure
-project/
-│
+---
+
+## Project Structure
+
+```
+/
 ├── main.py
-├── .env
-└── README.md
+├── README.md
+└── .env
+```
 
-Logging
+---
 
-The script uses Python's logging module for progress updates and error reporting.
+## Error Handling
 
-Troubleshooting
-1. Incorrect Property Names
+### Missing Notion properties
 
-If you see:
+If database property names don’t match:
 
+```
 Error: A property in your script does not match your Notion database.
+```
 
+Fix the property names in Notion.
 
-Verify that Notion contains exactly:
+### Missing environment variables
 
-Puzzle Title (Title)
+If `.env` is not set:
 
-URL (URL)
+```
+Notion API Key or Database ID not found in .env file.
+```
 
-Done (Checkbox)
+Ensure `.env` is correctly created.
 
-2. Notion credentials not found
-
-Ensure .env exists and keys are correct.
+---
